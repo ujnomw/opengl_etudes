@@ -32,8 +32,8 @@ int main()
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
-    std::for_each(std::begin(vertices), std::end(vertices), [](float &v)
-                  { v *= -1.f; });
+    // std::for_each(std::begin(vertices), std::end(vertices), [](float &v)
+    //               { v *= -1.f; });
     unsigned int VBO;
     glGenBuffers(1, &VBO);
     unsigned int VAO;
@@ -43,9 +43,10 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     const char *vertexShaderSource = "#version 330 core\n"
                                      "layout (location = 0) in vec3 aPos;\n"
+                                     "uniform float hOffset;\n"
                                      "void main()\n"
                                      "{\n"
-                                     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                     "   gl_Position = vec4(-aPos.x - hOffset, -aPos.y, -aPos.z, 1.0);\n"
                                      "}\0";
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -84,10 +85,14 @@ int main()
 
         glUseProgram(shaderProgram);
         float timeValue = glfwGetTime();
+        float &x = timeValue;
+        float horizontalOffset = sin(x + sqrt(x)) / 2.f;
         float greenValue = sin(timeValue) / 2.0f + 0.5f;
         float redValue = 1.f - (sin(timeValue / 2.f) / 2.0f + 0.5f);
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        int vertexHorizontalOffsetLocation = glGetUniformLocation(shaderProgram, "hOffset");
         glUniform4f(vertexColorLocation, redValue, greenValue, 0.0f, 1.0f);
+        glUniform1f(vertexHorizontalOffsetLocation, horizontalOffset);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
