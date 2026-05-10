@@ -9,7 +9,11 @@ add_executable(hello_triangle_app
                                     src/stb_image.cpp
                                     )
 
-target_include_directories(hello_triangle_app PRIVATE include /opt/homebrew/include)
+target_include_directories(hello_triangle_app
+                           PRIVATE include 
+                           /opt/homebrew/include
+                           ${CMAKE_SOURCE_DIR}/include/glm-1.0.3
+                           )
 
 target_link_directories(hello_triangle_app PRIVATE /opt/homebrew/lib)
 
