@@ -8,6 +8,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+void processInput(GLFWwindow *window);
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 int main() {
   if (!glfwInit())
@@ -136,6 +140,7 @@ glm::vec3 cubePositions[] = {
     glm::vec3(-1.3f,  1.0f, -1.5f)  
 };
   // clang-format on
+
   unsigned int VBO, VAO, EBO;
   glGenBuffers(1, &VBO);
   glGenVertexArrays(1, &VAO);
@@ -153,6 +158,8 @@ glm::vec3 cubePositions[] = {
   shader.setInt("texture2", 1);
 
   while (!glfwWindowShouldClose(window)) {
+    processInput(window);
+
     glClearColor(0.5f, 0.6f, 0.8f, 1.0f); // background
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -163,7 +170,11 @@ glm::vec3 cubePositions[] = {
     glBindVertexArray(VAO);
 
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    float time = glfwGetTime();
+    float radius = 10.0f;
+    float camX = sin(time) * radius;
+    float camZ = cos(time) * radius;
+    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
     glm::mat4 perspective = glm::mat4(1.0f);
     perspective =
@@ -200,4 +211,18 @@ glm::vec3 cubePositions[] = {
   }
 
   glfwTerminate();
+}
+
+void processInput(GLFWwindow *window) {
+  const float cameraSpeed = 0.05f;
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    cameraPos += cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    cameraPos -= cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    cameraPos -=
+        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    cameraPos +=
+        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
