@@ -213,6 +213,7 @@ float vertices[] = {
     lightCubeShader.setMat4("model", lightCubeModel);
     lightCubeShader.setMat4("view", view);
     lightCubeShader.setMat4("perspective", perspective);
+    lightCubeShader.setVec3("lightColor", lightColor);
     glBindVertexArray(lightCubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
