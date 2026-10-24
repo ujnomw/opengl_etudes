@@ -15,9 +15,12 @@ target_include_directories(hello_triangle_app
                            ${CMAKE_SOURCE_DIR}/include/glm-1.0.3
                            )
 
+find_package(assimp CONFIG REQUIRED)
 target_link_directories(hello_triangle_app PRIVATE /opt/homebrew/lib)
 
-target_link_libraries(hello_triangle_app glfw "-framework OpenGL")
+target_link_libraries(hello_triangle_app 
+                                        glfw "-framework OpenGL"  
+                                        assimp::assimp)
 
 add_custom_command(
     TARGET hello_triangle_app POST_BUILD
